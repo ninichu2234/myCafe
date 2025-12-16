@@ -26,7 +26,7 @@ export async function POST(request) {
       });
     }
 
-    // [FIX] เพิ่ม Rule 9: SELF-CORRECTION
+    
     const systemPrompt = `
         You are a helpful Thai cafe barista.
         You MUST respond with **only** a single, valid JSON object.
@@ -125,7 +125,7 @@ export async function POST(request) {
     }
     
     const rawResponseText = data.candidates[0].content.parts[0].text;
-    
+    z
     try {
         const cleanedResponseText = rawResponseText
             .replace(/[\x00-\x1F\x7F-\x9F]/g, "") 

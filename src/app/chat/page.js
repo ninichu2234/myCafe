@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-// [FIX PATH] แก้ไข Path ไปยัง supabaseClient ให้ถูกต้อง
+
 import { supabase } from '../lib/supabaseClient'; 
 import Image from 'next/image';
 
-// [FIX PATH] ตรวจสอบ Path ไปยัง Component
+
 import RecommendedMenuCard from '../../component/RecommendedMenuCard'; 
 import { v4 as uuidv4 } from 'uuid'; 
 
@@ -17,7 +17,7 @@ export default function ChatPage() {
     const [allMenuItems, setAllMenuItems] = useState([]);
     const [allOptions, setAllOptions] = useState({});
     
-    // (แก้บั๊กตะกร้าหาย) โหลดตะกร้าใน "Lazy Initializer"
+   
     const [cartItems, setCartItems] = useState(() => {
         if (typeof window === 'undefined') {
             return []; 
@@ -34,7 +34,7 @@ export default function ChatPage() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [isListening, setIsListening] = useState(false); 
     
-    // (แก้บั๊กตะกร้าหาย)
+  
     const isInitialMount = useRef(true); 
 
     const [isContinuousListening, setIsContinuousListening] = useState(false);
@@ -44,7 +44,7 @@ export default function ChatPage() {
     const [isReady, setIsReady] = useState(false);
     const loadStatusRef = useRef({ menus: false, options: false });
 
-    // ... (useEffect โหลดเมนูและ options - เหมือนเดิม) ...
+    
     useEffect(() => {
         const checkReadyState = () => {
             if (loadStatusRef.current.menus && loadStatusRef.current.options) {
@@ -98,7 +98,7 @@ export default function ChatPage() {
         isInitialMount.current = false;
     }, []); 
 
-    // ... (useEffect คำนวณตะกร้า - เหมือนเดิม) ...
+   
     useEffect(() => {
         const currentCart = Array.isArray(cartItems) ? cartItems : [];
         const newTotal = currentCart.reduce((sum, item) => {
@@ -120,7 +120,7 @@ export default function ChatPage() {
         }
     }, [cartItems]); 
 
-    // [START] เติมโค้ด STT/TTS ที่หายไป
+
     const speak = (text, onEndCallback = null) => {
         if (typeof window === 'undefined' || !window.speechSynthesis || !text) {
             if (onEndCallback) onEndCallback();
@@ -261,12 +261,12 @@ export default function ChatPage() {
             startListening();
         }
     };
-    // [END] เติมโค้ด STT/TTS ที่หายไป
+    
 
 
-    // --- (ฟังก์ชันจัดการตะกร้า) ---
+
     const _updateCart = (itemToAddFromCard) => {
-        // ... (โค้ด _updateCart เหมือนเดิม) ...
+
         setCartItems(prevItems => {
             const currentCart = Array.isArray(prevItems) ? prevItems : [];
             if (!itemToAddFromCard?.menuId) { 
@@ -343,7 +343,7 @@ export default function ChatPage() {
         });
     };
     
-    // (บีม) เรายังไม่ได้ใช้ 2 ฟังก์ชันนี้ แต่ใส่ไว้เผื่อ AI เรียก
+    
     const _handleModifyItems = (itemsToModify) => { 
         if (!itemsToModify || itemsToModify.length === 0) return;
         console.log("AI requested to MODIFY items (not implemented):", itemsToModify);
@@ -358,7 +358,7 @@ export default function ChatPage() {
                 if (itemInfo.cartItemId) {
                     items = items.filter(i => i.cartItemId !== itemInfo.cartItemId);
                 } else if (itemInfo.menuName) {
-                    // ลบ item แรกที่เจอที่ชื่อตรงกัน (อาจจะไม่แม่นยำ)
+                 
                     const indexToRemove = items.findIndex(i => i.menuName === itemInfo.menuName);
                     if (indexToRemove > -1) {
                         items.splice(indexToRemove, 1);
@@ -368,21 +368,19 @@ export default function ChatPage() {
             return items;
         });
     };
-    
-    // [FIX] (เอา window.confirm ออก)
+   
     const _handleRemoveItemFromCart = (cartItemIdToRemove, itemName, quantity) => {
         if (!cartItemIdToRemove) return;
         
-        // ลบเลยทันที
         setCartItems(prevItems => {
             return prevItems.filter(item => item.cartItemId !== cartItemIdToRemove);
         });
     };
 
     
-    // --- (handleSubmit - เหมือนเดิม) ---
+   
     const handleSubmit = async (textFromSpeech = null, onEndCallback = null) => { 
-        // ... (โค้ด handleSubmit ทั้งหมดเหมือนเดิม) ...
+        
         const currentQuestion = textFromSpeech || question; 
         if (!currentQuestion.trim() || currentQuestion === "กำลังฟัง...") {
             if (onEndCallback) onEndCallback();
@@ -407,7 +405,7 @@ export default function ChatPage() {
             });
         }
         
-        // (บีม) ส่งตะกร้าปัจจุบันไปด้วย
+      
         const cartContext = JSON.stringify(cartItems);
 
         let finalAnswerText = ''; 
@@ -421,7 +419,7 @@ export default function ChatPage() {
                     menuContext, 
                     optionsContext,
                     chatHistory: chatHistory,
-                    cartContext: cartContext // ส่งตะกร้าไปด้วย
+                    cartContext: cartContext 
                 }) 
             });
             const data = await res.json();
@@ -472,15 +470,15 @@ export default function ChatPage() {
         }
     };
 
-    // --- JSX (เหมือนเดิม) ---
+    
     return (
         <div className="bg-white min-h-screen"> 
             
-            {/* (เอา Pop-up JSX ออกแล้ว) */}
+          
             
             <div className="container mx-auto p-4 sm:p-8 max-w-5xl">
                 
-                {/* ... (Header, Today's Special, Input Section - เหมือนเดิม) ... */}
+               
                  <div className="text-center mb-8">
                      <h1 className="text-[#4A3728] font-bold text-3xl tracking-tight">Barista</h1>
                      <p className="text-[#4A3728] font-bold">Ready to recommend for you</p>
@@ -512,7 +510,7 @@ export default function ChatPage() {
 
                 {/* Recommendation Section */}
                 <div className="bg-[#4A3728] p-6 rounded-xl shadow-lg min-h-[100px] mb-8">
-                     {/* ... (Suggestion title) ... */}
+                    
                      <div className="flex items-start space-x-4"> 
                          <div className="bg-[#2c8160] rounded-full p-2 flex-shrink-0"> <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.5a1 1 0 01.7.3l2.4 2.4a1 1 0 01.3.7V8z" /></svg> </div>
                          <div className="w-full"> 
@@ -541,7 +539,7 @@ export default function ChatPage() {
                 {/* Cart Summary Section */}
                 <div className="bg-[#F0EBE3] p-6 rounded-xl shadow-lg sticky top-4 z-10">
                     
-                    {/* (เนื้อหาเดิมของ Cart Summary - เหมือนเดิม) */}
+                    
                     <h2 className="text-2xl font-bold text-[#4A3728] mb-4">Your Order</h2>
                     <div className="space-y-3 mb-4 max-h-48 overflow-y-auto pr-2">
                         {Array.isArray(cartItems) && cartItems.length > 0 ? (
@@ -567,7 +565,7 @@ export default function ChatPage() {
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <p className="font-bold whitespace-nowrap w-[70px] text-right"> {itemTotal.toFixed(2)} ฿</p>
                                             
-                                            {/* (onClick - เหมือนเดิม) */}
+                                           
                                             <button
                                                 onClick={() => _handleRemoveItemFromCart(item.cartItemId, item.menuName, item.quantity)}
                                                 className="text-red-500 hover:text-red-700 font-bold text-xs w-5 h-5 rounded-full bg-red-100 flex items-center justify-center transition-colors"

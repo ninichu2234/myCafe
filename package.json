@@ -1,5 +1,5 @@
 {
-  "name": "training-next-js",
+  "name": "training-next",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -23,9 +23,24 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
+    "@types/node": "^25.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4"
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ninichu2234/training-next-beam.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ninichu2234/training-next-beam/issues"
+  },
+  "homepage": "https://github.com/ninichu2234/training-next-beam#readme"
 }
