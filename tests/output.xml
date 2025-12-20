@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3.2 (Python 3.13.5 on darwin)" generated="2025-12-20T13:09:46.175750" rpa="false" schemaversion="5">
+<suite id="s1" name="Test" source="/Users/hymorrane/projectDSI122/tests/test.robot">
+<test id="s1-t1" name="Test Search And Order Flow" line="11">
+<kw name="Open Browser To Menu Page">
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-12-20T13:09:51.339535" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-12-20T13:09:46.338072" elapsed="5.002543"/>
+</kw>
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-12-20T13:09:51.343214" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000/menu-page'.</msg>
+<arg>${URL_MENU}</arg>
+<arg>${BROWSER}</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-12-20T13:09:51.341783" elapsed="3.063856"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-12-20T13:09:54.407232" elapsed="0.365539"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//input[@placeholder='Search menu']</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-12-20T13:09:54.773875" elapsed="0.139131"/>
+</kw>
+<status status="PASS" start="2025-12-20T13:09:46.337414" elapsed="8.575922"/>
+</kw>
+<kw name="Search For Menu Item">
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-12-20T13:09:54.916512" level="INFO">Typing text 'Americano' into text field 'xpath=//input[@placeholder='Search menu']'.</msg>
+<arg>xpath=//input[@placeholder='Search menu']</arg>
+<arg>${menu_name}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-12-20T13:09:54.915030" elapsed="0.349395"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-12-20T13:10:00.273611" level="INFO">Slept 5 seconds.</msg>
+<arg>5s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-12-20T13:09:55.264707" elapsed="5.013171"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//h3[contains(text(), '${menu_name}')]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-12-20T13:10:00.278962" elapsed="0.020845"/>
+</kw>
+<arg>${TARGET_MENU}</arg>
+<status status="PASS" start="2025-12-20T13:09:54.914147" elapsed="5.386145"/>
+</kw>
+<kw name="Select Menu Item">
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-12-20T13:10:00.302777" level="INFO">Clicking element 'xpath=//h3[contains(text(), 'Americano')]'.</msg>
+<arg>xpath=//h3[contains(text(), '${menu_name}')]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-12-20T13:10:00.302127" elapsed="0.088974"/>
+</kw>
+<arg>${TARGET_MENU}</arg>
+<status status="PASS" start="2025-12-20T13:10:00.301746" elapsed="0.089630"/>
+</kw>
+<kw name="Verify Detail Page Loaded">
+<kw name="Wait Until Location Contains" owner="SeleniumLibrary">
+<arg>menuDetail</arg>
+<arg>timeout=10s</arg>
+<doc>Waits until the current URL contains ``expected``.</doc>
+<status status="PASS" start="2025-12-20T13:10:00.392651" elapsed="0.253870"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//h1[contains(@class, 'text-3xl')]</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-12-20T13:10:00.646914" elapsed="0.255890"/>
+</kw>
+<status status="PASS" start="2025-12-20T13:10:00.392397" elapsed="0.510545"/>
+</kw>
+<kw name="Adjust Quantity To">
+<for flavor="IN RANGE">
+<iter>
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2025-12-20T13:10:00.908989" level="INFO">Clicking button 'xpath=//button[text()='+']'.</msg>
+<msg time="2025-12-20T13:10:02.199021" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-6.png"&gt;&lt;img src="selenium-screenshot-6.png" width="800px"&gt;&lt;/a&gt;</msg>
+<msg time="2025-12-20T13:10:02.199928" level="FAIL">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+8   chromedriver                        0x00000001048c7748 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 323088
+9   chromedriver                        0x0000000104912968 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 630832
+10  chromedriver                        0x00000001048c616c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8
+</msg>
+<arg>xpath=//button[text()='+']</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="FAIL" start="2025-12-20T13:10:00.908292" elapsed="1.297866">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+    [ Message content over the limit has been removed. ]
+... _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8</status>
+</kw>
+<var name="${i}">1</var>
+<status status="FAIL" start="2025-12-20T13:10:00.907763" elapsed="1.298796">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+    [ Message content over the limit has been removed. ]
+... _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8</status>
+</iter>
+<var>${i}</var>
+<value>1</value>
+<value>${target_qty}</value>
+<status status="FAIL" start="2025-12-20T13:10:00.903876" elapsed="1.302821">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+    [ Message content over the limit has been removed. ]
+... _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8</status>
+</for>
+<kw name="Element Should Contain" owner="SeleniumLibrary">
+<arg>xpath=//span[contains(@class, 'text-center')]</arg>
+<arg>${target_qty}</arg>
+<doc>Verifies that element ``locator`` contains text ``expected``.</doc>
+<status status="NOT RUN" start="2025-12-20T13:10:02.207110" elapsed="0.000049"/>
+</kw>
+<arg>3</arg>
+<status status="FAIL" start="2025-12-20T13:10:00.903242" elapsed="1.304062">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+    [ Message content over the limit has been removed. ]
+... _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8</status>
+</kw>
+<kw name="Input Special Instruction">
+<arg>${NOTE_TEXT}</arg>
+<status status="NOT RUN" start="2025-12-20T13:10:02.207637" elapsed="0.000032"/>
+</kw>
+<kw name="Add To Cart">
+<status status="NOT RUN" start="2025-12-20T13:10:02.207773" elapsed="0.000020"/>
+</kw>
+<kw name="Verify Redirect To Basket">
+<status status="NOT RUN" start="2025-12-20T13:10:02.207877" elapsed="0.000018"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-12-20T13:10:02.208160" elapsed="0.122621"/>
+</kw>
+<doc>ทดสอบ Flow: ค้นหาเมนู -&gt; เข้าหน้ารายละเอียด -&gt; ปรับจำนวน/Note -&gt; ใส่ตะกร้า -&gt; เช็คว่าไปหน้า Basket</doc>
+<status status="FAIL" start="2025-12-20T13:09:46.335466" elapsed="15.995558">ElementClickInterceptedException: Message: element click intercepted: Element is not clickable at point (1026, 1074)
+  (Session info: chrome=143.0.7499.146)
+Stacktrace:
+0   chromedriver                        0x0000000104d98b2c cxxbridge1$str$ptr + 3033596
+1   chromedriver                        0x0000000104d90b30 cxxbridge1$str$ptr + 3000832
+2   chromedriver                        0x000000010488ab0c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 74196
+3   chromedriver                        0x00000001048d743c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 387844
+4   chromedriver                        0x00000001048d5a1c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 381156
+5   chromedriver                        0x00000001048d388c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 372564
+6   chromedriver                        0x00000001048d2c9c _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 369508
+7   chromedriver                        0x00000001048c7ca4 _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 324460
+    [ Message content over the limit has been removed. ]
+... _RNvCsgXDX2mvAJAg_7___rustc35___rust_no_alloc_shim_is_unstable_v2 + 317492
+11  chromedriver                        0x0000000104d5c098 cxxbridge1$str$ptr + 2785128
+12  chromedriver                        0x0000000104d5f804 cxxbridge1$str$ptr + 2799316
+13  chromedriver                        0x0000000104d3c850 cxxbridge1$str$ptr + 2656032
+14  chromedriver                        0x0000000104d60074 cxxbridge1$str$ptr + 2801476
+15  chromedriver                        0x0000000104d2d1cc cxxbridge1$str$ptr + 2592924
+16  chromedriver                        0x0000000104d7fcb4 cxxbridge1$str$ptr + 2931588
+17  chromedriver                        0x0000000104d7fe34 cxxbridge1$str$ptr + 2931972
+18  chromedriver                        0x0000000104d90788 cxxbridge1$str$ptr + 2999896
+19  libsystem_pthread.dylib             0x000000019c4bac0c _pthread_start + 136
+20  libsystem_pthread.dylib             0x000000019c4b5b80 thread_start + 8</status>
+</test>
+<status status="FAIL" start="2025-12-20T13:09:46.176820" elapsed="16.156348"/>
+</suite>
+<statistics>
+<total>
+<stat pass="0" fail="1" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Test" id="s1" pass="0" fail="1" skip="0">Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
