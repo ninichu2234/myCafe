@@ -1,0 +1,2 @@
+1766422729806	geckodriver	INFO	Listening on 127.0.0.1:60783
+1766422729867	mozrunner::runner	INFO	Running command: MOZ_CRASHREPORTER="1" MOZ_CRASHREPORTER_NO_REPORT="1" MOZ_CRASHREPORTER_SHUTDOWN="1" "/Applications/Firefox. ... s" "localhost" "-foreground" "-no-remote" "-profile" "/var/folders/8b/v4gjgk6j67g21jddh3d_zsxc0000gn/T/rust_mozprofile1YfyHg"

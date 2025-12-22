@@ -5,7 +5,7 @@ Test Teardown     Close Browser
 Test Template     Order With Custom Options
 
 *** Variables ***
-${URL_DETAIL}     http://localhost:3000/menuDetail/1  
+${URL_DETAIL}     http://localhost:3000/menuDetail/
 # ⚠️ เปลี่ยน ID เป็นเมนูที่มี Options จริงๆ (เช่น Coffee)
 ${BROWSER}        chrome
 
