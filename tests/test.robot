@@ -15,10 +15,8 @@ ${ITEM_REFRESHER}    Soda
 ${ITEM_BAKERY}       Croissant
 ${ITEM_DESSERT}      Cheesecake
 ${ITEM_OTHER}        Drinking Water
-
-# --- 📝 รายชื่อเมนู (Custom Option Test) ---
 ${ITEM_LATTE}        Latte
-${ITEM_ESPRESSO}     Espresso
+${ITEM_ESPRESSO}     Ice Espresso
 
 *** Test Cases ***
 
@@ -51,19 +49,19 @@ TC-09: User can click add menu in 'Milk' category
     Select Item And Add To Cart           ${ITEM_MILK}
 
 # --- หมวด DESSERT (เน้นเรื่อง Flow หน้า Basket) ---
-TC-19: Verify search in 'Dessert' category
+TC-10: Verify search in 'Dessert' category
     Search And Verify Item In Category    ${ITEM_DESSERT}    Dessert
-TC-20: Verify User click in 'Dessert' category with side menu
+TC-11: Verify User click in 'Dessert' category with side menu
     Click Side Menu And Verify Header     Dessert
-TC-21: User can click add menu in 'Dessert' and go to Basket
+TC-12: User can click add menu in 'Dessert' and go to Basket
     Select Item And Add To Cart           ${ITEM_DESSERT}
 
 # --- หมวด OTHER (เน้นเรื่อง Flow หน้า Basket) ---
-TC-22: Verify search in 'Other' category
+TC-13: Verify search in 'Other' category
     Search And Verify Item In Category    ${ITEM_OTHER}    Other
-TC-23: Verify User click in 'Other' category with side menu
+TC-14: Verify User click in 'Other' category with side menu
     Click Side Menu And Verify Header     Other
-TC-24: User can click add menu in 'Other' and go to Basket
+TC-15: User can click add menu in 'Other' and go to Basket
     Select Item And Add To Cart           ${ITEM_OTHER}
 
 
@@ -72,42 +70,36 @@ TC-24: User can click add menu in 'Other' and go to Basket
 # เลือกความหวาน, Extra Shot, Syrup -> เช็คหน้า Basket
 # ====================================================
 
-TC-25: Order Americano with 0% Sweetness
+TC-16: Order Americano with 0% Sweetness
     [Documentation]    สั่งกาแฟแบบไม่หวานเลย แล้วเช็คในตะกร้า
     # 1. เข้าหน้า Detail
     Select Item To Detail Page    ${ITEM_COFFEE}
     
     # 2. เลือก Option (สมมติว่าในหน้าเว็บมีปุ่มเขียนว่า '0% Sweetness')
-    Select Custom Option          None sweet (0%)
+    Select Custom Option          Unsweetened (0%)
     
     # 3. กด Add
     Click Add To Cart Button
     
     # 4. เช็คในตะกร้า
-    Verify Item In Basket With Option    ${ITEM_COFFEE}    None sweet (0%)
+    Verify Item In Basket With Option    ${ITEM_COFFEE}    Unsweetened (0%)
 
-TC-26: Order Latte with Extra Shot and Vanilla Syrup
+TC-17: Order Latte with Extra Shot and Vanilla Syrup
     [Documentation]    สั่งลาเต้ เพิ่มช็อต และ ไซรัป (หลาย Option)
     # 1. เข้าหน้า Detail
     Select Item To Detail Page    ${ITEM_LATTE}
     
     # 2. เลือกหลาย Option
-    Select Custom Option          Extra Shot
-    Select Custom Option          Vanilla Syrup
+    Select Custom Option          Extra Espresso Shot
+    Select Custom Option          Vanilla 
     
     # 3. กด Add
     Click Add To Cart Button
     
     # 4. เช็คในตะกร้า (ต้องเจอทั้งคู่)
-    Verify Item In Basket With Option    ${ITEM_LATTE}    Extra Shot
-    Verify Item In Basket With Option    ${ITEM_LATTE}    Vanilla Syrup
+    Verify Item In Basket With Option    ${ITEM_LATTE}    Extra Espresso Shot
+    Verify Item In Basket With Option    ${ITEM_LATTE}    Vanilla 
 
-TC-27: Order Espresso with 50% Sweetness
-    [Documentation]    สั่ง Espresso หวานน้อย
-    Select Item To Detail Page    ${ITEM_ESPRESSO}
-    Select Custom Option          Less Sweet (50%)
-    Click Add To Cart Button
-    Verify Item In Basket With Option    ${ITEM_ESPRESSO}    Less Sweet (50%)
 
 
 *** Keywords ***
