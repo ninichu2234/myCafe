@@ -12,6 +12,7 @@ ${BROWSER}        chrome
 
 *** Keywords ***
 Open Browser To Menu Detail Page
+    Sleep    5s
     Open Browser    ${URL_DETAIL}    ${BROWSER}
     Maximize Browser Window
     Wait Until Element Is Visible    xpath=//h1    timeout=10s

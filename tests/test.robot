@@ -9,12 +9,12 @@ ${BROWSER}        chrome
 
 # --- 📝 แก้ไขชื่อเมนูตัวแทนของแต่ละหมวดตรงนี้ให้ตรงกับ DB จริง ---
 ${ITEM_COFFEE}       Americano
-${ITEM_TEA}          Matcha Green Tea
-${ITEM_MILK}         Fresh Milk
-${ITEM_REFRESHER}    Yuzu Soda
+${ITEM_TEA}          Green Tea
+${ITEM_MILK}         Milk
+${ITEM_REFRESHER}    Soda
 ${ITEM_BAKERY}       Croissant
-${ITEM_DESSERT}      Ice Cream
-${ITEM_OTHER}        Drinking Water
+${ITEM_DESSERT}      Cake
+${ITEM_OTHER}        Water
 
 *** Test Cases ***
 
@@ -98,7 +98,7 @@ Open Browser To Menu Page
 Search And Verify Item In Category
     [Arguments]    ${item_name}    ${category_id}
     Input Text    xpath=//input[@placeholder='Search menu']    ${item_name}
-    Sleep    1s
+    Sleep    5s
     Wait Until Element Is Visible    id=${category_id}
     Element Should Be Visible    xpath=//section[@id='${category_id}']//h3[contains(text(), '${item_name}')]
 
