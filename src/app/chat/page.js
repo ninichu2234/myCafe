@@ -2,9 +2,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
+// ตรวจสอบ Path ของ supabaseClient ให้ตรงกับโปรเจกต์คุณด้วยนะครับ
 import { supabase } from '../lib/supabaseClient'; 
 import Image from 'next/image';
-
 
 import RecommendedMenuCard from '../../component/RecommendedMenuCard'; 
 import { v4 as uuidv4 } from 'uuid'; 
@@ -14,10 +14,11 @@ export default function ChatPage() {
     const [answer, setAnswer] = useState('สวัสดีค่ะ ให้ AI Barista แนะนำเมนูอะไรดีคะ?');
     const [isLoading, setIsLoading] = useState(false);
     const [recommendedMenus, setRecommendedMenus] = useState([]);
+    
+    // ข้อมูลจาก Supabase สำหรับใช้แสดงผลในการ์ด (รูป, ราคา)
     const [allMenuItems, setAllMenuItems] = useState([]);
     const [allOptions, setAllOptions] = useState({});
     
-   
     const [cartItems, setCartItems] = useState(() => {
         if (typeof window === 'undefined') {
             return []; 
@@ -33,68 +34,61 @@ export default function ChatPage() {
 
     const [totalPrice, setTotalPrice] = useState(0);
     const [isListening, setIsListening] = useState(false); 
-    
-  
     const isInitialMount = useRef(true); 
-
     const [isContinuousListening, setIsContinuousListening] = useState(false);
     const recognitionRef = useRef(null);
     const [chatHistory, setChatHistory] = useState([]);
 
-    const [isReady, setIsReady] = useState(false);
-    const loadStatusRef = useRef({ menus: false, options: false });
+    // ปรับให้เริ่มต้นเป็น false แต่จะปลดล็อกอัตโนมัติเมื่อโหลดเสร็จ
+    const [isReady, setIsReady] = useState(false); 
 
-    
+    // โหลดข้อมูลเริ่มต้นจาก Supabase
     useEffect(() => {
-        const checkReadyState = () => {
-            if (loadStatusRef.current.menus && loadStatusRef.current.options) {
+        const fetchInitialData = async () => {
+            try {
+                // 1. ดึงข้อมูลเมนู
+                const { data: menuItems, error: menuError } = await supabase.from('menuItems').select('*');
+                if (menuError) throw menuError; 
+                
+                if (menuItems) {
+                    const getFolderName = (cat) => {  
+                        switch(cat){ case 'Coffee': case 'Tea': case 'Milk': case 'Refreshers': return 'Drink'; case 'Bakery': case 'Cake': case 'Dessert': return 'Bakery'; case 'Other': return 'orther'; default: return cat;} 
+                    };
+                    const itemsWithImages = menuItems.map(item => {
+                        if (item.menuImage && item.menuCategory) {
+                            const folderName = getFolderName(item.menuCategory);
+                            const imagePath = `${folderName}/${item.menuImage}`;
+                            const { data: imageData } = supabase.storage.from('menu-images').getPublicUrl(imagePath);
+                            return { ...item, publicImageUrl: imageData?.publicUrl };
+                        } 
+                        return item; 
+                    });
+                    setAllMenuItems(itemsWithImages);
+                }
+
+                // 2. ดึงข้อมูล Option
+                const { data: optionsData, error: optionsError } = await supabase.from('option').select(`optionName, priceAdjustment, optionGroups ( nameGroup ) `); 
+                if (optionsError) throw optionsError;
+                
+                if (optionsData) {
+                    const grouped = optionsData.reduce((acc, opt) => {
+                        if (!opt.optionGroups || !opt.optionGroups.nameGroup) { return acc; }
+                        const group = opt.optionGroups.nameGroup; 
+                        if (!acc[group]) acc[group] = [];
+                        acc[group].push({ optionName: opt.optionName, priceAdjustment: opt.priceAdjustment ?? 0 });
+                        return acc;
+                    }, {}); 
+                    setAllOptions(grouped);
+                }
+            } catch (error) {
+                console.error("ChatPage: Error fetching data from Supabase:", error.message);
+            } finally {
+                // *** จุดสำคัญ *** บังคับให้ isReady เป็น true เสมอ เพื่อปลดล็อก UI
                 setIsReady(true);
             }
         };
-
-        const fetchAllMenus = async () => { 
-            try {
-                const { data: menuItems, error } = await supabase.from('menuItems').select('*');
-                if (error) throw error; if (!menuItems) throw new Error("No data");
-                const getFolderName = (cat) => { /* Function to get folder name */ 
-                    switch(cat){ case 'Coffee': case 'Tea': case 'Milk': case 'Refreshers': return 'Drink'; case 'Bakery': case 'Cake': case 'Dessert': return 'Bakery'; case 'Other': return 'orther'; default: return cat;} };
-                const itemsWithImages = menuItems.map(item => {
-                    if (item.menuImage && item.menuCategory) {
-                        const folderName = getFolderName(item.menuCategory);
-                        const imagePath = `${folderName}/${item.menuImage}`;
-                        const { data: imageData } = supabase.storage.from('menu-images').getPublicUrl(imagePath);
-                        return { ...item, publicImageUrl: imageData?.publicUrl };
-                    } return item; });
-                setAllMenuItems(itemsWithImages);
-                loadStatusRef.current.menus = true;
-                checkReadyState();
-            } catch (error) { console.error("ChatPage: Error fetching menus:", error.message); setAllMenuItems([]); }
-        };
-
-        const fetchAllOptions = async () => {
-            try {
-                const { data: optionsData, error } = await supabase.from('option').select(`optionName, priceAdjustment, optionGroups ( nameGroup ) `); 
-                if (error) throw error;
-                if (!optionsData) throw new Error("No options data returned");
-                const grouped = optionsData.reduce((acc, opt) => {
-                    if (!opt.optionGroups || !opt.optionGroups.nameGroup) { return acc; }
-                    const group = opt.optionGroups.nameGroup; 
-                    if (!acc[group]) acc[group] = [];
-                    acc[group].push({ optionName: opt.optionName, priceAdjustment: opt.priceAdjustment ?? 0 });
-                    return acc;
-                }, {}); 
-                setAllOptions(grouped);
-                loadStatusRef.current.options = true;
-                checkReadyState();
-            } catch (error) {
-                console.error("ChatPage: Error fetching options:", error.message);
-                setAllOptions({});
-            }
-        };
         
-        fetchAllMenus();
-        fetchAllOptions(); 
-        
+        fetchInitialData();
         isInitialMount.current = false;
     }, []); 
 
@@ -119,7 +113,6 @@ export default function ChatPage() {
             } catch (error) { console.error("ChatPage: Failed to save cart", error); }
         }
     }, [cartItems]); 
-
 
     const speak = (text, onEndCallback = null) => {
         if (typeof window === 'undefined' || !window.speechSynthesis || !text) {
@@ -194,7 +187,6 @@ export default function ChatPage() {
         };
         rec.onresult = (e) => {
             const text = e.results[0][0].transcript;
-            console.log("STT: Heard:", text);
             setQuestion(text);
             setIsListening(false);
             if (recognitionRef.current) {
@@ -204,11 +196,9 @@ export default function ChatPage() {
             handleSubmit(text, startListening);
         };
         rec.onend = () => {
-            console.log("STT: Listener ended.");
             setIsListening(false);
             recognitionRef.current = null;
             if (isContinuousListening && !isLoading) { 
-                 console.log("STT: Timeout or no speech, listening again.");
                  startListening();
             }
         };
@@ -226,7 +216,6 @@ export default function ChatPage() {
                  alert("Speech Recognition ใช้งานไม่ได้ อาจจะต้องรันบน HTTPS หรือ localhost เท่านั้นค่ะ");
                  stopContinuousListening(); 
             } else if (e.error !== 'aborted' && isContinuousListening) {
-                console.log("STT: Error, listening again.");
                 startListening();
             }
         };
@@ -234,7 +223,6 @@ export default function ChatPage() {
     };
 
     const stopContinuousListening = () => {
-        console.log("Stopping continuous conversation.");
         setIsContinuousListening(false);
         setIsListening(false);
         setIsLoading(false); 
@@ -262,15 +250,10 @@ export default function ChatPage() {
         }
     };
     
-
-
-
     const _updateCart = (itemToAddFromCard) => {
-
         setCartItems(prevItems => {
             const currentCart = Array.isArray(prevItems) ? prevItems : [];
             if (!itemToAddFromCard?.menuId) { 
-                console.error("ChatPage: Invalid item data received from card:", itemToAddFromCard); 
                 return currentCart; 
             }
             const itemOptionsList = itemToAddFromCard.customizations?.selectedOptions || itemToAddFromCard.suggestedOptions || [];
@@ -343,14 +326,13 @@ export default function ChatPage() {
         });
     };
     
-    
     const _handleModifyItems = (itemsToModify) => { 
         if (!itemsToModify || itemsToModify.length === 0) return;
-        console.log("AI requested to MODIFY items (not implemented):", itemsToModify);
+        console.log("AI requested to MODIFY items:", itemsToModify);
     };
+
     const _handleDeleteItems = (itemsToDelete) => {
         if (!itemsToDelete || itemsToDelete.length === 0) return;
-        console.log("AI requested to DELETE items:", itemsToDelete);
         
         setCartItems(prevItems => {
             let items = [...prevItems];
@@ -358,7 +340,6 @@ export default function ChatPage() {
                 if (itemInfo.cartItemId) {
                     items = items.filter(i => i.cartItemId !== itemInfo.cartItemId);
                 } else if (itemInfo.menuName) {
-                 
                     const indexToRemove = items.findIndex(i => i.menuName === itemInfo.menuName);
                     if (indexToRemove > -1) {
                         items.splice(indexToRemove, 1);
@@ -371,16 +352,11 @@ export default function ChatPage() {
    
     const _handleRemoveItemFromCart = (cartItemIdToRemove, itemName, quantity) => {
         if (!cartItemIdToRemove) return;
-        
-        setCartItems(prevItems => {
-            return prevItems.filter(item => item.cartItemId !== cartItemIdToRemove);
-        });
+        setCartItems(prevItems => prevItems.filter(item => item.cartItemId !== cartItemIdToRemove));
     };
 
-    
-   
+    // ฟังก์ชันสำหรับส่งคำถามไปหา AI
     const handleSubmit = async (textFromSpeech = null, onEndCallback = null) => { 
-        
         const currentQuestion = textFromSpeech || question; 
         if (!currentQuestion.trim() || currentQuestion === "กำลังฟัง...") {
             if (onEndCallback) onEndCallback();
@@ -393,69 +369,64 @@ export default function ChatPage() {
         setIsLoading(true); 
         setAnswer("กำลังคิด..."); 
         setRecommendedMenus([]);
-        const updatedHistory = [ ...chatHistory, { role: "user", parts: [{ text: currentQuestion }] } ];
-        let menuContext = "Menu:\n"; 
-        allMenuItems.forEach(item => { menuContext += `- ID: ${item.menuId}, Name: ${item.menuName}, Price: ${item.menuPrice}\n`; }); 
-        let optionsContext = "Available Customizations:\n";
-        for (const groupName in allOptions) {
-            optionsContext += `* ${groupName}:\n`;
-            allOptions[groupName].forEach(opt => {
-                const priceInfo = (opt.priceAdjustment ?? 0) > 0 ? `+${opt.priceAdjustment}B` : 'default';
-                optionsContext += `  - ${opt.optionName} (${priceInfo})\n`;
-            });
-        }
-        
-      
-        const cartContext = JSON.stringify(cartItems);
 
+        const updatedHistory = [ ...chatHistory, { role: "user", parts: [{ text: currentQuestion }] } ];
+        
         let finalAnswerText = ''; 
-        let aiResponseData = null;
         try {
+            // ไม่ต้องส่ง MenuContext/OptionsContext แล้ว เพราะ Backend ไปอ่านจาก database.json เอง
             const res = await fetch('/api/chat', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
                     question: currentQuestion,
-                    menuContext, 
-                    optionsContext,
                     chatHistory: chatHistory,
-                    cartContext: cartContext 
+                    cartItems: cartItems 
                 }) 
             });
+
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || `API Error (${res.status})`); 
-            aiResponseData = data; 
+            
+            const aiResponseData = data; 
             if (!aiResponseData.text) { throw new Error("AI response missing 'text' field"); }
             finalAnswerText = aiResponseData.text; 
             setAnswer(finalAnswerText); 
+            
             let recs = []; 
             if (Array.isArray(aiResponseData.recommendations)) { 
                 recs = aiResponseData.recommendations.map(m => { 
                     const id = m?.menuId ?? m?.item_id; 
                     if (id == null) return null; 
-                    const fullMenuItem = allMenuItems.find(i => String(i.menuId) === String(id)); 
-                    if (!fullMenuItem) {
-                        console.warn("AI recommended an unknown menuId:", id);
-                        return null; 
-                    }
+                    
+                    // ดึงรูปและราคาตั้งต้นจาก Supabase Data
+                    const fullMenuItem = allMenuItems.find(i => String(i.menuId) === String(id)) || {}; 
+                    
+                    // ใช้ชื่อเมนูจาก AI ถ้าหาใน Supabase ไม่เจอ (เพื่อให้แสดงผลได้แม้ Supabase มีปัญหา)
+                    const displayMenu = {
+                        ...fullMenuItem,
+                        menuId: id,
+                        menuName: fullMenuItem.menuName || m.menuName || "เมนูแนะนำ",
+                        menuPrice: fullMenuItem.menuPrice || 0,
+                    };
+
                     const suggestedOptions = m.suggestedOptions || [];
                     const quantity = m.quantity || 1; 
-                    return { ...fullMenuItem, suggestedOptions: suggestedOptions, quantity: quantity };
+                    return { ...displayMenu, suggestedOptions: suggestedOptions, quantity: quantity };
                 }).filter(Boolean); 
             } 
             setRecommendedMenus(recs); 
+
             if (Array.isArray(aiResponseData.itemsToAutoAdd) && aiResponseData.itemsToAutoAdd.length > 0) {
                 aiResponseData.itemsToAutoAdd.forEach(item => {
-                    const fullMenuItem = allMenuItems.find(m => String(m.menuId) === String(item.menuId));
-                    if (fullMenuItem) {
-                         _updateCart({ ...fullMenuItem, ...item });
-                    } else {
-                        console.warn("AI tried to auto-add unknown menuId:", item.menuId);
-                    }
+                    const fullMenuItem = allMenuItems.find(m => String(m.menuId) === String(item.menuId)) || item;
+                    _updateCart({ ...fullMenuItem, ...item });
                 });
             }
+
             _handleModifyItems(aiResponseData.itemsToModify);
             _handleDeleteItems(aiResponseData.itemsToDelete);
+
         } catch (error) { 
             console.error("ChatPage Submit Error:", error); 
             finalAnswerText = `เกิดข้อผิดพลาด: ${error.message}`; 
@@ -464,21 +435,16 @@ export default function ChatPage() {
         } finally { 
             setIsLoading(false); 
             setChatHistory([ ...updatedHistory, { role: "model", parts: [{ text: finalAnswerText }] } ]);
+            
             if (onEndCallback) { speak(finalAnswerText, onEndCallback); } 
             else if (textFromSpeech) { setQuestion(''); speak(finalAnswerText); }
-            if (!textFromSpeech && !onSpeakEndCallback) { setQuestion(''); }
+            if (!textFromSpeech && !onEndCallback) { setQuestion(''); }
         }
     };
 
-    
     return (
         <div className="bg-white min-h-screen"> 
-            
-          
-            
             <div className="container mx-auto p-4 sm:p-8 max-w-5xl">
-                
-               
                  <div className="text-center mb-8">
                      <h1 className="text-[#4A3728] font-bold text-3xl tracking-tight">Barista</h1>
                      <p className="text-[#4A3728] font-bold">Ready to recommend for you</p>
@@ -492,14 +458,14 @@ export default function ChatPage() {
                  </div>
                  <div className="bg-[#4A3728] p-6 rounded-xl shadow-lg mb-8"> 
                      <label htmlFor="question" className="block text-white font-bold mb-6">What can I get for you?</label>
-                     <textarea id="question" value={question} onChange={(e) => setQuestion(e.target.value)} className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition placeholder-gray-400 disabled:cursor-not-allowed disabled:bg-white/5" rows="3" placeholder={!isReady ? "กำลังโหลดเมนู... กรุณารอสักครู่" : "เช่น กาแฟไม่เปรี้ยว, ชาผลไม้, หรือ 'ลบเค้กออก'..."} disabled={isLoading || isListening || isContinuousListening || !isReady} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !isLoading && !isListening && !isContinuousListening && isReady) { e.preventDefault(); handleSubmit(null, null); } }} />
+                     <textarea id="question" value={question} onChange={(e) => setQuestion(e.target.value)} className="w-full px-4 py-3 bg-white/10 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition placeholder-gray-400 disabled:cursor-not-allowed disabled:bg-white/5" rows="3" placeholder={!isReady ? "กำลังเตรียมร้าน... กรุณารอสักครู่" : "เช่น กาแฟไม่เปรี้ยว, ชาผลไม้, หรือ 'ลบเค้กออก'..."} disabled={isLoading || isListening || isContinuousListening || !isReady} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey && !isLoading && !isListening && !isContinuousListening && isReady) { e.preventDefault(); handleSubmit(null, null); } }} />
                      <div className="mt-3 flex flex-wrap gap-2"> 
                          <button onClick={() => setQuestion("New Menu?")} disabled={!isReady} className="text-xs bg-white/20 hover:bg-white/30 text-white py-1 px-3 rounded-full transition disabled:bg-gray-400 disabled:cursor-not-allowed">New Menu?</button>
                          <button onClick={() => setQuestion("Something sweet")} disabled={!isReady} className="text-xs bg-white/20 hover:bg-white/30 text-white py-1 px-3 rounded-full transition disabled:bg-gray-400 disabled:cursor-not-allowed">Something sweet</button>
                      </div>
                      <div className="mt-4 flex items-center gap-3">
                          <button onClick={() => handleSubmit(null, null)} disabled={isLoading || !question.trim() || isListening || isContinuousListening || question === "กำลังฟัง..." || !isReady} className="w-full bg-[#2c8160] hover:bg-green-900 text-white font-bold py-3 px-8 rounded-full transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"> 
-                            {!isReady ? 'Loading Menu...' : isLoading ? 'Thinking...' : ' Ask Barista'} 
+                            {!isReady ? 'Loading...' : isLoading ? 'Thinking...' : ' Ask Barista'} 
                         </button>
                          <button onClick={toggleContinuousListen} disabled={(isLoading && !isContinuousListening) || !isReady} className={`p-3 rounded-full transition-colors ${ isContinuousListening ? 'bg-red-600 animate-pulse' : 'bg-white/20 hover:bg-white/30' } disabled:bg-gray-400 disabled:cursor-not-allowed`} title={isContinuousListening ? "หยุดคุย" : "เริ่มคุยด้วยเสียง"}> 
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 11-14 0m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg> 
@@ -507,10 +473,8 @@ export default function ChatPage() {
                      </div>
                  </div>
 
-
                 {/* Recommendation Section */}
                 <div className="bg-[#4A3728] p-6 rounded-xl shadow-lg min-h-[100px] mb-8">
-                    
                      <div className="flex items-start space-x-4"> 
                          <div className="bg-[#2c8160] rounded-full p-2 flex-shrink-0"> <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2V7a2 2 0 012-2h2.5a1 1 0 01.7.3l2.4 2.4a1 1 0 01.3.7V8z" /></svg> </div>
                          <div className="w-full"> 
@@ -538,8 +502,6 @@ export default function ChatPage() {
 
                 {/* Cart Summary Section */}
                 <div className="bg-[#F0EBE3] p-6 rounded-xl shadow-lg sticky top-4 z-10">
-                    
-                    
                     <h2 className="text-2xl font-bold text-[#4A3728] mb-4">Your Order</h2>
                     <div className="space-y-3 mb-4 max-h-48 overflow-y-auto pr-2">
                         {Array.isArray(cartItems) && cartItems.length > 0 ? (
@@ -564,13 +526,10 @@ export default function ChatPage() {
                                         
                                         <div className="flex items-center gap-2 flex-shrink-0">
                                             <p className="font-bold whitespace-nowrap w-[70px] text-right"> {itemTotal.toFixed(2)} ฿</p>
-                                            
-                                           
                                             <button
                                                 onClick={() => _handleRemoveItemFromCart(item.cartItemId, item.menuName, item.quantity)}
                                                 className="text-red-500 hover:text-red-700 font-bold text-xs w-5 h-5 rounded-full bg-red-100 flex items-center justify-center transition-colors"
                                                 title="Remove item"
-                                                aria-label={`Remove ${item.menuName} from cart`}
                                             >
                                                 &times; 
                                             </button>
@@ -594,7 +553,6 @@ export default function ChatPage() {
                     </Link>
                 </div>
             </div>
-
         </div>
     );
 }

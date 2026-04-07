@@ -1,0 +1,43 @@
+{
+    "menus": [
+      {
+        "menuId": "101",
+        "menuName": "อเมริกาโน่เย็น (Iced Americano)",
+        "menuPrice": 60,
+        "description": "กาแฟดำรสชาติเข้มข้น หอมกลิ่นคั่ว เหมาะสำหรับคนชอบกาแฟเพียวๆ ไม่ใส่นม แคลอรี่ต่ำ"
+      },
+      {
+        "menuId": "102",
+        "menuName": "ลาเต้เย็น (Iced Latte)",
+        "menuPrice": 70,
+        "description": "กาแฟเอสเพรสโซ่ผสมนมสด นุ่มละมุน ดื่มง่าย เหมาะกับวันที่ต้องการความผ่อนคลาย"
+      },
+      {
+        "menuId": "103",
+        "menuName": "ชาไทยเย็น (Iced Thai Tea)",
+        "menuPrice": 55,
+        "description": "ชาไทยสกัดเข้มข้น หอมกลิ่นชาดั้งเดิม หวานมันกลมกล่อม เมนูยอดฮิต"
+      },
+      {
+        "menuId": "104",
+        "menuName": "บิงซูสตรอว์เบอร์รี (Strawberry Bingsu)",
+        "menuPrice": 150,
+        "description": "น้ำแข็งไสเกาหลีรสนม ราดซอสและสตรอว์เบอร์รีสด หวานเย็นชื่นใจ ช่วยฮีลใจวันเหนื่อยๆ ได้ดี"
+      }
+    ],
+    "options": {
+      "ความหวาน (Sweetness)": [
+        { "optionName": "หวาน 100% (ปกติ)", "priceAdjustment": 0 },
+        { "optionName": "หวาน 50% (หวานน้อย)", "priceAdjustment": 0 },
+        { "optionName": "หวาน 0% (ไม่หวาน)", "priceAdjustment": 0 }
+      ],
+      "ประเภทนม (Milk Type)": [
+        { "optionName": "นมอ๊อต (Oat Milk)", "priceAdjustment": 20 },
+        { "optionName": "นมอัลมอนด์ (Almond Milk)", "priceAdjustment": 20 }
+      ],
+      "เพิ่มท็อปปิ้ง (Add-ons)": [
+        { "optionName": "เพิ่มช็อตกาแฟ (Extra Shot)", "priceAdjustment": 15 },
+        { "optionName": "ไข่มุก (Boba)", "priceAdjustment": 10 }
+      ]
+    }
+  }
