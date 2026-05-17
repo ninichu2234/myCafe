@@ -1,5 +1,5 @@
 *** Variables ***
-${URL_MENU}         http://localhost:3001/menu-page
+${URL_MENU}         http://localhost:3000/menu-page
 ${BROWSER}           chrome
 ${ITEM_COFFEE}       Americano
 ${ITEM_TEA}          Green Tea

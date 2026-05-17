@@ -19,10 +19,10 @@ async function generateEmbeddings() {
     try {
 
         console.log("กำลังดึงข้อมูลเมนูจาก Supabase...");
-        const { data: menuItems, error } = await supabaseAdmin // <-- (แก้ไข!)
+        const { data: menuItems, error } = await supabaseAdmin 
             .from("menuItems")
             .select("menuId, menuName, menuDescription, menuCategory, allergens")
-            .is('embedding', null); // (สำคัญ: เราจะทำเฉพาะอันที่ยังเป็น NULL เท่านั้น)
+            .is('embedding', null);
 
         if (error) throw error;
         

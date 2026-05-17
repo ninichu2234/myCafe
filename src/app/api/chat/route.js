@@ -5,11 +5,11 @@ export async function POST(req) {
         const body = await req.json();
         const { question, cartItems } = body;
 
-        // 1. ดึงข้อมูลจากไฟล์ JSON มาทำเป็น Context (RAG)
+        
         const menuContext = JSON.stringify(db.menus || []);
         const optionsContext = JSON.stringify(db.options || {});
 
-        // 2. จัดเตรียม Prompt บังคับให้ AI ตอบเป็น JSON กลับมา
+
         const systemPrompt = `
             You are a helpful AI Barista at a cafe.
             
@@ -36,7 +36,7 @@ export async function POST(req) {
             }
         `;
 
-        // 3. ยิง Request ไปหา Ollama ในเครื่องคุณเอง (Localhost)
+
         const response = await fetch('http://127.0.0.1:11434/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
